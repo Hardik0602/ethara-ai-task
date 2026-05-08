@@ -19,8 +19,7 @@ const Login = () => {
       login(res.data.token, res.data.user)
       navigate('/')
     } catch (err) {
-      console.log(err.response?.data?.message)
-      toast.error('Something went wrong')
+      toast.error(err.response?.data?.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }

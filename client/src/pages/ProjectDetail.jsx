@@ -6,6 +6,7 @@ import { FaArrowLeft, FaCircleNotch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
 import { TbClipboardOff } from 'react-icons/tb'
+import LoadingSpinner from '../components/LoadingSpinner'
 const ProjectDetail = () => {
   const { id } = useParams()
   const { user } = useAuth()
@@ -17,13 +18,17 @@ const ProjectDetail = () => {
   const [taskForm, setTaskForm] = useState({ title: '', description: '', dueDate: '', priority: 'Medium', assignedTo: '' })
   const [showMemberForm, setShowMemberForm] = useState(false)
   const [memberEmail, setMemberEmail] = useState('')
+  const [loadingData, setLoadingData] = useState(false)
   const fetchProject = async () => {
+    setLoadingData(true)
     try {
       const res = await api.get(`/projects/${id}`)
       setProject(res.data)
     } catch (err) {
       // console.log(err.response?.data?.message)
       toast.error('Failed to fetch project')
+    } finally {
+      setLoadingData(false)
     }
   }
   const fetchTasks = async () => {
@@ -117,6 +122,11 @@ const ProjectDetail = () => {
   const visibleTasks = isAdmin
     ? tasks
     : tasks.filter(task => task?.assignedTo?._id === user?.id)
+  if (loadingData) {
+    return (
+      <LoadingSpinner />
+    )
+  }
   if (!project) return (
     <div className='min-h-screen flex flex-col justify-center text-gray-400'>
       <TbClipboardOff

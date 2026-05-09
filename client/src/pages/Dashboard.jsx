@@ -4,13 +4,16 @@ import api from '../api/axios'
 import { toast } from 'react-toastify'
 import { TbClipboardOff } from 'react-icons/tb'
 import { FaArrowLeft } from 'react-icons/fa'
+import LoadingSpinner from '../components/LoadingSpinner'
 const Dashboard = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [projectName, setProjectName] = useState('')
+  const [loadingData, setLoadingData] = useState(false)
   useEffect(() => {
     const fetchData = async () => {
+      setLoadingData(true)
       try {
         const [dashRes, projectRes] = await Promise.all([
           api.get(`/tasks/dashboard/${id}`),
@@ -21,10 +24,17 @@ const Dashboard = () => {
       } catch (err) {
         // console.log(err.response?.data?.message)
         toast.error('Failed to load dashboard')
+      } finally {
+        setLoadingData(false)
       }
     }
     fetchData()
   }, [id])
+  if (loadingData) {
+    return (
+      <LoadingSpinner />
+    )
+  }
   if (!data) return (
     <div className='min-h-screen flex flex-col justify-center text-gray-400'>
       <TbClipboardOff

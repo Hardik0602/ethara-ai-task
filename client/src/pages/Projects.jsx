@@ -5,20 +5,25 @@ import { toast } from 'react-toastify'
 import { TbClipboardOff } from 'react-icons/tb'
 import { FaCircleNotch } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
+import LoadingSpinner from '../components/LoadingSpinner'
 const Projects = () => {
   const { user } = useAuth()
   const [projects, setProjects] = useState([])
   const [form, setForm] = useState({ name: '', description: '' })
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [loadingData, setLoadingData] = useState(false)
   const navigate = useNavigate()
   const fetchProjects = async () => {
+    setLoadingData(true)
     try {
       const res = await api.get('/projects')
       setProjects(res.data)
     } catch (err) {
       // console.log(err.response?.data?.message)
       toast.error('Failed to load projects')
+    } finally {
+      setLoadingData(false)
     }
   }
   useEffect(() => { fetchProjects() }, [])
@@ -54,6 +59,11 @@ const Projects = () => {
       // console.log(err.response?.data?.message)
       setError('Failed to delete project')
     }
+  }
+  if (loadingData) {
+    return (
+      <LoadingSpinner />
+    )
   }
   return (
     <div className='min-h-screen bg-slate-50 flex justify-center p-4'>

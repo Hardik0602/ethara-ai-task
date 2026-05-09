@@ -38,7 +38,7 @@ A full-stack React and Node.js web application built to streamline project and t
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/YourUsername/ethara-ai-task.git
+git clone https://github.com/Hardik0602/ethara-ai-task
 cd ethara-ai-task
 ```
 
@@ -96,7 +96,6 @@ ethara-ai-task/
 │       ├── App.jsx          # React Router setup
 │       ├── main.jsx         # React DOM rendering
 │       └── index.css        # Global Tailwind CSS
-│   
 └── server/                  # Backend Express Application
     ├── middleware/          # Custom Express middleware (Auth)
     ├── models/              # Mongoose database schemas

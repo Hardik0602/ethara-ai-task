@@ -22,7 +22,7 @@ const ProjectDetail = () => {
       const res = await api.get(`/projects/${id}`)
       setProject(res.data)
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to fetch project')
     }
   }
@@ -31,7 +31,7 @@ const ProjectDetail = () => {
       const res = await api.get(`/tasks/project/${id}`)
       setTasks(res.data)
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to fetch tasks')
     }
   }
@@ -50,7 +50,7 @@ const ProjectDetail = () => {
       toast.success('Task created successfully')
       fetchTasks()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to create task')
     }
   }
@@ -60,17 +60,18 @@ const ProjectDetail = () => {
       toast.success('Status updated successfully')
       fetchTasks()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to update status')
     }
   }
   const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Delete this task?')) return
     try {
       await api.delete(`/tasks/${taskId}`)
       toast.success('Task deleted successfully')
       fetchTasks()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to delete task')
     }
   }
@@ -83,19 +84,20 @@ const ProjectDetail = () => {
       toast.success('Member added successfully')
       fetchProject()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to add member')
     } finally {
       setLoading(false)
     }
   }
   const handleRemoveMember = async (userId) => {
+    if (!window.confirm('Remove this member?')) return
     try {
       await api.delete(`/projects/${id}/members/${userId}`)
       toast.success('Member removed successfully')
       fetchProject()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to remove member')
     }
   }

@@ -19,7 +19,7 @@ const Dashboard = () => {
         setData(dashRes.data)
         setProjectName(projectRes.data.name)
       } catch (err) {
-        console.log(err.response?.data?.message)
+        // console.log(err.response?.data?.message)
         toast.error('Failed to load dashboard')
       }
     }

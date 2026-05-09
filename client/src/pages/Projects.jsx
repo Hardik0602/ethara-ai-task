@@ -4,7 +4,9 @@ import api from '../api/axios'
 import { toast } from 'react-toastify'
 import { TbClipboardOff } from 'react-icons/tb'
 import { FaCircleNotch } from 'react-icons/fa'
+import { useAuth } from '../context/AuthContext'
 const Projects = () => {
+  const { user } = useAuth()
   const [projects, setProjects] = useState([])
   const [form, setForm] = useState({ name: '', description: '' })
   const [showForm, setShowForm] = useState(false)
@@ -15,7 +17,7 @@ const Projects = () => {
       const res = await api.get('/projects')
       setProjects(res.data)
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to load projects')
     }
   }
@@ -35,10 +37,22 @@ const Projects = () => {
       toast.success('Project created successfully')
       fetchProjects()
     } catch (err) {
-      console.log(err.response?.data?.message)
+      // console.log(err.response?.data?.message)
       toast.error('Failed to create project')
     } finally {
       setLoading(false)
+    }
+  }
+  const handleDelete = async (e, projectId) => {
+    e.stopPropagation()
+    if (!window.confirm('Delete this project and all its tasks?')) return
+    try {
+      await api.delete(`/projects/${projectId}`)
+      toast.success('Project deleted successfully')
+      fetchProjects()
+    } catch (err) {
+      // console.log(err.response?.data?.message)
+      setError('Failed to delete project')
     }
   }
   return (
@@ -108,7 +122,13 @@ const Projects = () => {
                     <p className='font-semibold text-gray-500'>
                       {project.members.length} Member{project.members.length !== 1 ? 's' : ''}
                     </p>
-                    <p className='text-gray-400 text-sm mt-1'>Admin: {project.admin.name}</p>
+                    {project.admin._id !== user.id
+                      ? <p className='text-gray-400 text-sm mt-1'>Admin: {project.admin.name}</p>
+                      : <button
+                        onClick={(e) => handleDelete(e, project._id)}
+                        className='bg-red-600 cursor-pointer text-white px-2 py-1.5 rounded-lg hover:bg-red-700 text-sm font-medium transition mt-1'>
+                        Delete Project
+                      </button>}
                   </div>
                 </div>
               </div>

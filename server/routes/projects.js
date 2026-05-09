@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Project = require('../models/Project')
 const User = require('../models/User')
+const Task = require('../models/Task')
 const auth = require('../middleware/auth')
 router.post('/', auth, async (req, res) => {
   try {
@@ -40,12 +41,23 @@ router.get('/:id', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message })
   }
 })
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' })
+    if (project.admin.toString() !== req.user.id) return res.status(403).json({ message: 'Only admin can perform this action' })
+    await Task.deleteMany({ project: project._id })
+    await project.deleteOne()
+    res.json({ message: 'Project deleted' })
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message })
+  }
+})
 router.post('/:id/members', auth, async (req, res) => {
   try {
     const project = await Project.findById(req.params.id)
     if (!project) return res.status(404).json({ message: 'Project not found' })
-    if (project.admin.toString() !== req.user.id)
-      return res.status(403).json({ message: 'Only admin can perform this action' })
+    if (project.admin.toString() !== req.user.id) return res.status(403).json({ message: 'Only admin can perform this action' })
     const user = await User.findOne({ email: req.body.email })
     if (!user) return res.status(404).json({ message: 'User not found' })
     if (project.members.includes(user._id)) return res.status(400).json({ message: 'User already a member' })
